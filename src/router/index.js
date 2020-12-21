@@ -3,17 +3,19 @@ import Router from 'vue-router'
 import NotFound from '../views/NotFound.vue'
 import SignIn from '../views/SignIn.vue'
 import Restaurants from '../views/Restaurants.vue'
+import store from './../store'
+
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   linkExactActiveClass: 'active',
 
   routes: [
     {
       path: '/',
       name: 'root',
-      redirect: '/restaurants'
+      redirect: '/signin'
     },
     {
       path: '/signin',
@@ -46,15 +48,59 @@ export default new Router({
       component: () => import('../views/Restaurant.vue')
     },
     {
-      path: '/users/:id',
-      name: 'user',
-      component: () => import('../views/User.vue')
-
+      path: '/restaurants/:id/dashboard',
+      name: 'restaurant-dashboard',
+      component: () => import('../views/RestaurantDashboard.vue')
     },
     {
       path: '/users/top',
       name: 'users-top',
       component: () => import('../views/UsersTop.vue')
+    },
+    {
+      path: '/users/:id',
+      name: 'user',
+      component: () => import('../views/User.vue')
+    },
+    {
+      path: '/users/:id/edit',
+      name: 'user-edit',
+      component: () => import('../views/UserEdit.vue')
+    },
+    {
+      path: '/admin',
+      exact: true,
+      redirect: '/admin/restaurants'
+    },
+    {
+      path: '/admin/restaurants',
+      name: 'admin-restaurants',
+      component: () => import('../views/AdminRestaurants.vue')
+    },
+    {
+      path: '/admin/restaurants/new',
+      name: 'admin-restaurant-new',
+      component: () => import('../views/AdminRestaurantNew.vue')
+    },
+    {
+      path: '/admin/restaurants/:id',
+      name: 'admin-restaurant',
+      component: () => import('../views/AdminRestaurant.vue')
+    },
+    {
+      path: '/admin/restaurants/:id/edit',
+      name: 'admin-restaurant-edit',
+      component: () => import('../views/AdminRestaurantEdit.vue')
+    },
+    {
+      path: '/admin/categories',
+      name: 'admin-categories',
+      component: () => import('../views/AdminCategories.vue')
+    },
+    {
+      path: '/admin/users',
+      name: 'admin-users',
+      component: () => import('../views/AdminUsers.vue')
     },
     {
       path: '*',
@@ -63,3 +109,18 @@ export default new Router({
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  console.log('to', to)
+  console.log('from', from)
+  next()
+})
+
+router.beforeEach((to, from, next) => {
+  // 使用 dispatch 呼叫 Vuex 內的 actions
+  store.dispatch('fetchCurrentUser')
+  next()
+})
+
+
+export default router

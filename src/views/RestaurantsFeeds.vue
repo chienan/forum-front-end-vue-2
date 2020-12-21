@@ -22,7 +22,10 @@
 import NavTabs from "../components/NavTabs";
 import NewestRestaurants from "../components/NewestRestaurants";
 import NewestComments from "../components/NewestComments";
+import restaurantsAPI from "../apis/restaurants";
+import { Toast } from "./../utils/helpers";
 
+// eslint-disable-next-line no-unused-vars
 const dummyData = {
   restaurants: [
     {
@@ -455,13 +458,33 @@ export default {
     this.fetchFeeds();
   },
   methods: {
-    fetchFeeds() {
-      const { restaurants, comments } = dummyData;
-      this.restaurants = restaurants;
-      this.comments = comments.filter(
-        comment => comment.Restaurant && comment.text
-      );
+    async fetchFeeds() {
+      try {
+        const response = await restaurantsAPI.getFeeds();
+
+        console.log("response", response);
+
+        const { restaurants, comments } = response.data;
+        this.restaurants = restaurants;
+        this.comments = comments.filter(
+          comment => comment.Restaurant && comment.text
+        );
+      } catch (error) {
+        console.log("error", error);
+        Toast.fire({
+          icon: "error",
+          title: "無法取得資料，請稍後再試"
+        });
+      }
     }
+
+    // fetchFeeds() {
+    //   const { restaurants, comments } = dummyData;
+    //   this.restaurants = restaurants;
+    //   this.comments = comments.filter(
+    //     comment => comment.Restaurant && comment.text
+    //   );
+    // }
   }
 };
 </script>

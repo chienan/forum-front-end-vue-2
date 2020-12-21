@@ -17,7 +17,7 @@
     <div id="navbarSupportedContent" class="navbar-collapse collapse">
       <div class="ml-auto d-flex align-items-center">
         <!-- is user is admin -->
-        <router-link v-if="currentUser.isAdmin" to="#" class="text-white mr-3">管理員後台</router-link>
+        <router-link v-if="currentUser.isAdmin" to="/admin" class="text-white mr-3">管理員後台</router-link>
 
         <!-- is user is login -->
         <template v-if="isAuthenticated">
@@ -30,45 +30,50 @@
 </template>
 
 <script>
-const dummyUser = {
-  //seed data
-  currentUser: {
-    id: "1",
-    name: "管理者",
-    email: "root@example.com",
-    image: "https://i.pravatar.cc/300",
-    isAdmin: true
-  },
-  isAuthenticated: true
-};
+import { mapState } from "vuex";
+
+// const dummyUser = {
+//   //seed data
+//   currentUser: {
+//     id: "1",
+//     name: "管理者",
+//     email: "root@example.com",
+//     image: "https://i.pravatar.cc/300",
+//     isAdmin: true
+//   },
+//   isAuthenticated: true
+// };
 
 export default {
   //沒資料時Vue會採用此預設值
-  data() {
-    return {
-      currentUser: {
-        id: "-1",
-        name: "",
-        email: "",
-        image: "",
-        isAdmin: false
-      },
-      isAuthenticated: false
-    };
-  },
+  // data() {
+  //   return {
+  //     currentUser: {
+  //       id: "-1",
+  //       name: "",
+  //       email: "",
+  //       image: "",
+  //       isAdmin: false
+  //     },
+  //     isAuthenticated: false
+  //   };
+  // },
 
-  created() {
-    this.fetchUser();
-  },
+  // created() {
+  //   this.fetchUser();
+  // },
 
-  methods: {
-    fetchUser() {
-      this.currentUser = {
-        ...this.currentUser,
-        ...dummyUser.currentUser
-      };
-      this.isAuthenticated = dummyUser.isAuthenticated;
-    }
+  // methods: {
+  //   fetchUser() {
+  //     this.currentUser = {
+  //       ...this.currentUser,
+  //       ...dummyUser.currentUser
+  //     };
+  //     this.isAuthenticated = dummyUser.isAuthenticated;
+  //   }
+  // }
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"])
   }
 };
 </script>

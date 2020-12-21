@@ -1,50 +1,45 @@
 <template>
   <div class="container py-5">
     <NavTabs />
-
+    <!-- 餐廳類別標籤 RestaurantsNavPills -->
     <RestaurantsNavPills :categories="categories" />
 
-    <Spinner v-if="isLoading" />
-    <template v-else>
-      <div class="row">
-        <!-- RestaurantCard -->
-        <RestaurantCard
-          v-for="restaurant in restaurants"
-          :key="restaurant.id"
-          :initial-restaurant="restaurant"
-        />
-      </div>
-
-      <RestaurantsPagination
-        v-if="totalPage.length > 1"
-        :current-page="currentPage"
-        :total-page="totalPage"
-        :category-id="categoryId"
-        :previous-page="previousPage"
-        :next-page="nextPage"
+    <div class="row">
+      <!-- 餐廳卡片 RestaurantCard-->
+      <RestaurantCard />
+      <RestaurantCard
+        v-for="restaurant in restaurants"
+        :key="restaurant.id"
+        :initial-restaurant="restaurant"
       />
+    </div>
 
-      <div v-if="restaurants.length < 1">此類別目前無餐廳資料</div>
-    </template>
+    <!-- 分頁標籤 RestaurantPagination -->
+    <RestaurantsPagination
+      v-if="totalPage.length > 1"
+      :current-page="currentPage"
+      :total-page="totalPage"
+      :category-id="categoryId"
+      :previous-page="previousPage"
+      :next-page="nextPage"
+    />
   </div>
 </template>
 
 <script>
-import NavTabs from "./../components/NavTabs";
-import RestaurantCard from "./../components/RestaurantCard";
-import RestaurantsNavPills from "./../components/RestaurantsNavPills";
-import RestaurantsPagination from "./../components/RestaurantsPagination";
+import NavTabs from "../components/NavTabs";
+import RestaurantCard from "../components/RestaurantCard";
+import RestaurantsNavPills from "../components/RestaurantsNavPills";
+import RestaurantsPagination from "../components/RestaurantsPagination";
 import restaurantsAPI from "./../apis/restaurants";
 import { Toast } from "./../utils/helpers";
-import Spinner from "./../components/Spinner";
+
 export default {
-  name: "Restaurants",
   components: {
     NavTabs,
     RestaurantCard,
     RestaurantsNavPills,
-    RestaurantsPagination,
-    Spinner
+    RestaurantsPagination
   },
   data() {
     return {
@@ -54,27 +49,37 @@ export default {
       currentPage: 1,
       totalPage: [],
       previousPage: -1,
-      nextPage: -1,
-      isLoading: true
+      nextPage: -1
     };
   },
   created() {
     const { page = "", categoryId = "" } = this.$route.query;
-    this.fetchRestaurants({ queryPage: page, queryCategoryId: categoryId });
+    this.fetchRestaurants({
+      queryPage: page,
+      queryCategoryId: categoryId
+    });
   },
   beforeRouteUpdate(to, from, next) {
     const { page = "", categoryId = "" } = to.query;
-    this.fetchRestaurants({ queryPage: page, queryCategoryId: categoryId });
+    console.log("to", to);
+    console.log("from", from);
+    this.fetchRestaurants({
+      queryPage: page,
+      queryCategoryId: categoryId
+    });
     next();
   },
   methods: {
     async fetchRestaurants({ queryPage, queryCategoryId }) {
       try {
-        this.isLoading = true;
         const response = await restaurantsAPI.getRestaurants({
           page: queryPage,
           categoryId: queryCategoryId
         });
+
+        console.log("response", response);
+
+        // STEP 2：透過解構賦值，將所需要的資料從 response.data 取出
         const {
           restaurants,
           categories,
@@ -84,6 +89,8 @@ export default {
           prev,
           next
         } = response.data;
+
+        // STEP 3：將從伺服器取得的 data 帶入 Vue 內
         this.restaurants = restaurants;
         this.categories = categories;
         this.categoryId = categoryId;
@@ -91,10 +98,8 @@ export default {
         this.totalPage = totalPage;
         this.previousPage = prev;
         this.nextPage = next;
-        this.isLoading = false;
       } catch (error) {
         console.log("error", error);
-        this.isLoading = false;
         Toast.fire({
           icon: "error",
           title: "無法取得餐廳資料，請稍後再試"
