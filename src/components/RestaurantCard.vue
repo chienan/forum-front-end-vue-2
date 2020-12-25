@@ -121,6 +121,7 @@ export default {
           ...this.restaurant,
           isLiked: true
         };
+        console.log(this.restaurant);
       } catch (error) {
         Toast.fire({
           icon: "error",
@@ -142,6 +143,7 @@ export default {
           ...this.restaurant,
           isLiked: false
         };
+        console.log(this.restaurant);
       } catch (error) {
         Toast.fire({
           icon: "error",

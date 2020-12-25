@@ -85,6 +85,7 @@ export default {
           restaurantId: this.restaurant.id,
           formData
         });
+        console.log(formData);
         if (data.status !== "success") {
           throw new Error(data.message);
         }
